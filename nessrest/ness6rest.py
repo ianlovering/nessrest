@@ -49,10 +49,11 @@ class Scanner(object):
     Scanner object
     '''
     def __init__(self, url, login='', password='', api_akey='', api_skey='',
-                 insecure=False, ca_bundle=''):
+            insecure=False, ca_bundle='', cert=None):
         self.api_akey = None
         self.api_skey = None
         self.use_api = False
+        self.cert = cert
         self.name = ''
         self.policy_name = ''
         self.debug = False
@@ -118,8 +119,8 @@ class Scanner(object):
 
 ################################################################################
     def _login(self, login="", password=""):
-        if login and password:
-            self.auth = [login,password]
+
+        self.auth = [login,password]
 
         self.action(action="session",
                     method="post",
@@ -208,7 +209,7 @@ class Scanner(object):
 
         try:
             req = requests.request(method, url, data=payload, files=files,
-                                   verify=verify, headers=headers)
+                                   verify=verify, headers=headers, cert=self.cert)
 
             if not download and req.text:
                 self.res = req.json()
